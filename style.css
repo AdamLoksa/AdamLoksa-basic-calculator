@@ -1,0 +1,135 @@
+*,
+*::after,
+*::before {
+   box-sizing: border-box;
+
+   margin: 0;
+   padding: 0;
+}
+
+:root {
+   --background-color: #fff;
+   --calculator-color: #222;
+   --calculator-color--light: #444;
+   --calculator-hover-color: #666;
+   --calculator-equal-color: #FFC05C;
+}
+
+html {
+   font-size: 10px;
+   background-color: var(--background-color);
+}
+
+img {
+   max-width: 100%;
+   display: block;
+}
+
+
+
+/* Calculator */
+/* Style */
+button {
+   border: none;
+   /* border: 0.5px solid #262626; */
+   font-size: 2rem;
+   text-align: center;
+   padding: 3rem;
+
+   transition: all ease-in-out 0.15s;
+}
+
+button:hover {
+   background-color: var(--calculator-hover-color);
+   cursor: pointer;
+}
+
+button:focus {
+   outline: none;
+}
+
+.output {
+   display: flex;
+   flex-direction: column;
+   justify-content: flex-start;
+   align-items: flex-end;
+
+   padding: 1.5rem 3rem;
+}
+
+.output-operation {
+   height: 4rem;
+   font-size: 3rem;
+   padding-top: 1rem;
+}
+
+.output-result {
+   height: 2rem;
+   font-size: 2rem;
+}
+
+button, .output {
+   font-family: 'Gill Sans', sans-serif;
+   font-weight: 100;
+   
+   color: #fff;
+   background-color: var(--calculator-color);
+}
+
+/* Layout */
+.container {
+   width: 400px;
+   height: 90vh;
+   max-width: 90%;
+   
+   display: flex;
+   margin: 0 auto;
+   justify-content: center;
+   align-items: center;
+}
+
+.grid-container {
+   display: grid;
+   grid-template-columns: repeat(4, 1fr);
+   grid-template-rows: repeat(5, 1fr);
+}
+
+.calculator {
+   background-color: var(--calculator-color);
+   box-shadow: 0 0px 1px rgba(0,0,0,0.2), 
+               0 0px 2px rgba(0,0,0,0.2), 
+               0 0px 4px rgba(0,0,0,0.2), 
+               0 0px 8px rgba(0,0,0,0.2),
+               0 0px 16px rgba(0,0,0,0.2);
+}
+
+button[data-action="equal"] {
+   grid-column: 4 / 5;
+   color: var(--calculator-equal-color);
+}
+
+
+
+/* Footer */
+.site {
+   display: flex;
+   min-height: 100vh;
+   flex-direction: column;
+   justify-content: center;
+}
+
+.site-content {
+   flex: 1;
+}
+
+.footer-link {
+   display: block;
+   width: 50px;
+   margin: 1rem;
+   transition: transform 0.2s ease-in-out;
+}
+
+.footer-link:hover {
+   cursor: pointer;
+   transform: scale(1.1);
+}
