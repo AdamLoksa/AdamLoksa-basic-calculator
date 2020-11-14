@@ -1,7 +1,8 @@
 //variables for result tracking
 let currentOperation = '';
-let operationResult = 0;
+let operationResult = '';
 let lastOperationResult = 0;
+let equalStatus = 0;
 
 
 //calculator selectors
@@ -17,6 +18,10 @@ calculatorKeys.addEventListener('click', (e) => {
    const keyContent = key.textContent;
 
    if (!action) {
+      if (equalStatus === 1){
+            clearCalculator();
+      }
+      
       addCharToOperation(keyContent);
       operationResult = calculate(currentOperation);
       displayOperation();
@@ -27,8 +32,15 @@ calculatorKeys.addEventListener('click', (e) => {
 })
 
 
+
+
+
 //non numerical inputs
 function processAction(action) {
+   if (currentOperation === ''){
+      return;
+   }
+
    switch(action) {
       case 'clear':
          clearCalculator();
@@ -38,6 +50,8 @@ function processAction(action) {
          lastOperationResult = operationResult;
          currentOperation = operationResult + '';
          operationResult = '';
+         displayOperation();
+         equalStatus = 1;
          break;
 
       case 'multiply':
@@ -56,11 +70,6 @@ function processAction(action) {
          addCharToOperation('-');
          break;
 
-      case 'decimal':
-         alert('To be added')
-         // addCharToOperation('.');
-         break;
-
       case 'percentage':
          addCharToOperation('%');
          break;
@@ -68,13 +77,19 @@ function processAction(action) {
       case 'factorial':
          calculateFactorial();
          break;
+         
    }
-   displayOperation();
+   // displayOperation();
 }
 
 
 //display functions
 function addCharToOperation(char) {
+   if (currentOperation.length - 1 > 13) {
+      alert('You reached maximum input length.')
+      return;
+   }
+
    const lastIndexIsOperand = (/[*+%/!\-]/).test(currentOperation.slice(-1));
    const charIsNum = (/[0-9]/.test(char));
 
@@ -83,6 +98,7 @@ function addCharToOperation(char) {
    } 
 
    currentOperation += char;
+   equalStatus = 0;
    displayOperation();
 }
 
@@ -131,7 +147,8 @@ function calculateFactorial() {
 
 // ** Basic MATH parser START ** //
 function calculate(expression) {
-   return parseAdditionExpressions(expression, '+');
+   const result = parseAdditionExpressions(expression, '+');
+   return result;
 }
 
 // parse ' + ' operations
