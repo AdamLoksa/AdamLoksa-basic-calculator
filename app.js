@@ -1,9 +1,5 @@
-//variables for result tracking
-let currentOperation = '';
-let operationResult = '';
-let lastOperationResult = 0;
-let equalStatus = 0;
-
+// Variable is changed after pressing equal to 'true'
+let equalStatus = 'false';
 
 //calculator selectors
 const outputResult = document.querySelector('.output-result');
@@ -17,80 +13,107 @@ calculatorKeys.addEventListener('click', (e) => {
    const action = key.dataset.action;
    const keyContent = key.textContent;
 
-   if (!action) {
-      if (equalStatus === 1){
-            clearCalculator();
-      }
-      
-      addCharToOperation(keyContent);
-      operationResult = calculate(currentOperation);
-      displayOperation();
-   } 
-   else {
-      processAction(action);
-   }
+   computeCalculation(action, keyContent);
 })
 
 
+// process Input
+function computeCalculation(action, keyContent) {
+   let operation = outputOperation.textContent; 
+   let result = outputResult.textContent;
 
-
-
-//non numerical inputs
-function processAction(action) {
-   if (currentOperation === ''){
-      return;
-   }
-
-   switch(action) {
-      case 'clear':
-         clearCalculator();
-         return; 
+   if (!action) {
+      if (equalStatus === 'true') {
+         operation = '';
+         equalStatus = 'false';
+      }
       
-      case 'equal':
-         lastOperationResult = operationResult;
-         currentOperation = operationResult + '';
-         operationResult = '';
-         displayOperation();
-         equalStatus = 1;
-         break;
-
-      case 'multiply':
-         addCharToOperation('*');
-         break;
-
-      case 'divide':
-         addCharToOperation('/');
-         break;
-
-      case 'add':
-         addCharToOperation('+');
-         break;
-
-      case 'subtract':
-         addCharToOperation('-');
-         break;
-
-      case 'percentage':
-         addCharToOperation('%');
-         break;
-
-      case 'factorial':
-         calculateFactorial();
-         break;
-         
+      processNumber(keyContent, operation);
    }
-   // displayOperation();
+   else {
+      equalStatus = 'false';
+      processAction(action, operation, result);
+   }
+
+   return;
 }
 
 
-//display functions
-function addCharToOperation(char) {
-   if (currentOperation.length - 1 > 13) {
-      alert('You reached maximum input length.')
+// inputs
+function processNumber(number, operation){
+   let currentOperation = addCharToOperation(number, operation);
+
+   let result = calculate(currentOperation);
+   displayOperation(currentOperation, result);
+   return;
+}
+
+function processAction(action, operation, result) {
+   if (operation === ''){
       return;
    }
 
-   const lastIndexIsOperand = (/[*+%/!\-]/).test(currentOperation.slice(-1));
+   let currentOperation = operation;
+   let operationResult = result;
+
+   switch(action) {
+      case 'clear':
+         currentOperation = '';
+         operationResult = '';
+         break; 
+      
+      case 'equal':
+         currentOperation = calculate(operation);
+         operationResult = '';
+         equalStatus = 'true';
+         break;
+
+      case 'multiply':
+         currentOperation = addCharToOperation('*', operation);
+         break;
+
+      case 'divide':
+         currentOperation = addCharToOperation('/', operation);
+         break;
+
+      case 'add':
+         currentOperation = addCharToOperation('+', operation);
+         break;
+
+      case 'subtract':
+         currentOperation = addCharToOperation('-', operation);
+         break;
+
+      case 'percentage':
+         currentOperation = addCharToOperation('%', operation);
+         break;
+      
+      case 'factorial':
+         operationResult = calculate(operation);
+         currentOperation = operationResult + '!';
+         operationResult = calculateFactorial(operationResult);
+         break;
+
+      case 'decimal':
+         currentOperation = addCharToOperation('.', operation);
+         break;
+   }
+
+   displayOperation(currentOperation, operationResult);
+   return;
+}
+
+
+//String
+function addCharToOperation(char, operation) {
+   let currentOperation = operation;
+   
+   if (currentOperation.length - 1 > 13) {
+      alert('You reached maximum input length.')
+      return 'Press AC to continue';
+   }
+
+   const lastIndexIsOperand = (/[*+%/!.\-]/).test(currentOperation.slice(-1));
    const charIsNum = (/[0-9]/.test(char));
 
    if (lastIndexIsOperand && !charIsNum){
@@ -98,57 +121,53 @@ function addCharToOperation(char) {
    } 
 
    currentOperation += char;
-   equalStatus = 0;
-   displayOperation();
-}
-
-function displayOperation() {
-   outputResult.textContent = operationResult;
-   outputOperation.textContent = currentOperation;
+   return currentOperation;
 }
 
 
-// Input handling
-function validateNumInput() {
-   if (currentOperantion.length - 1 > 13) {
-
+// Display
+function displayOperation(operation, result) {
+   if (operation.length > 15) {
+      outputOperation.style.fontSize = "2rem";
+      outputOperation.style['padding-top'] = "2rem";
    }
-}
-
-// CLEAR function
-function clearCalculator() {
-   currentOperation = '';
-   operationResult = '';
-   lastOperationResult = 0;
-
-   displayOperation();
+   else {
+      outputOperation.style.fontSize = "3rem";
+      outputOperation.style['padding-top'] = "1rem";
+   }
+   
+   if (result !== 'Not a Number') {
+      outputResult.textContent = result;
+   } 
+   
+   outputOperation.textContent = operation;
+   return;
 }
 
 
 // MATH functions
-function calculateFactorial() {
-   operationResult = calculate(currentOperation);
-
-   if (operationResult === 0){
-      currentOperation = '0!';
-      operationResult = 1;
+function calculateFactorial(operation) {
+   if (operation === 0){
+      return '1';
    } 
    else {
       let result = 1;
-      for (let i = 1; i <= operationResult; i++) {
+      for (let i = 1; i <= operation; i++) {
          result *= i;
       }
-
-      currentOperation = operationResult + '!';
-      operationResult = result;
+      return result;
    }
-   displayOperation();
 }
 
 // ** Basic MATH parser START ** //
 function calculate(expression) {
    const result = parseAdditionExpressions(expression, '+');
-   return result;
+   if (isFinite(result)) {
+      return result;
+   }
+   else {
+      return 'Not a Number';
+   }
 }
 
 // parse ' + ' operations
@@ -190,7 +209,7 @@ function parseMultiplicationExpressions(expression) {
 // parse ' / ' operations
 function parseDivisionExpressions(expression) {
    const numbersStr = expression.split('/');
-   const numbers = numbersStr.map(str => parseInt(str));
+   const numbers = numbersStr.map(str => parseFloat(str));
    const initValue = numbers[0];
    const result = numbers.slice(1).reduce((acc, operand) => acc / operand, initValue);
    return result;
