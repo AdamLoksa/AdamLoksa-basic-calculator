@@ -1,3 +1,6 @@
+// Key animation not added
+
+
 // Variable is changed after pressing equal to 'true'
 let equalStatus = 'false';
 
