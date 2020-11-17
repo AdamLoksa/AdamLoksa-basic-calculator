@@ -7,7 +7,7 @@ const outputOperation = document.querySelector('.output-operation');
 const calculatorKeys = document.querySelector('#calculator__keys');
 
 
-//event listener
+//event listeners
 calculatorKeys.addEventListener('click', (e) => {
    const key = e.target;
    const action = key.dataset.action;
@@ -16,6 +16,22 @@ calculatorKeys.addEventListener('click', (e) => {
    computeCalculation(action, keyContent);
 })
 
+
+window.addEventListener('keydown', (e) => {
+   const action = /[*+%/!.=\-]/;
+   const number = /[0-9]/;
+   const keyContent = e.key;
+
+
+   if ( action.test(keyContent) || keyContent === 'Backspace' || keyContent === 'Enter') {
+      computeCalculation(keyContent, '');
+   } 
+   else if ( (number.test(keyContent)) ) {
+      computeCalculation('', keyContent);
+   }
+
+   return;
+})
 
 // process Input
 function computeCalculation(action, keyContent) {
@@ -62,41 +78,48 @@ function processAction(action, operation, result) {
          operationResult = '';
          break; 
       
-      case 'equal':
-         currentOperation = calculate(operation);
+      case '=':
+      case 'Enter':
+         // currentOperation = calculate(operation);
+         currentOperation = result;
          operationResult = '';
          equalStatus = 'true';
          break;
 
-      case 'multiply':
+      case '*':
          currentOperation = addCharToOperation('*', operation);
          break;
 
-      case 'divide':
+      case '/':
          currentOperation = addCharToOperation('/', operation);
          break;
 
-      case 'add':
+      case '+':
          currentOperation = addCharToOperation('+', operation);
          break;
 
-      case 'subtract':
+      case '-':
          currentOperation = addCharToOperation('-', operation);
          break;
 
-      case 'percentage':
+      case '%':
          currentOperation = addCharToOperation('%', operation);
          break;
       
       case 'factorial':
+      case '!':
          operationResult = calculate(operation);
          currentOperation = operationResult + '!';
          operationResult = calculateFactorial(operationResult);
          break;
 
-      case 'decimal':
+      case '.':
          currentOperation = addCharToOperation('.', operation);
          break;
+
+      case 'Backspace':
+         currentOperation = backSpace(operation);
+         operationResult = calculate(currentOperation);
    }
 
    displayOperation(currentOperation, operationResult);
@@ -144,6 +167,10 @@ function displayOperation(operation, result) {
    return;
 }
 
+function backSpace(operation) {
+   return operation.slice(0,-1);
+}
+
 
 // MATH functions
 function calculateFactorial(operation) {
@@ -162,6 +189,7 @@ function calculateFactorial(operation) {
 // ** Basic MATH parser START ** //
 function calculate(expression) {
    const result = parseAdditionExpressions(expression, '+');
+
    if (isFinite(result)) {
       return result;
    }
@@ -209,7 +237,8 @@ function parseMultiplicationExpressions(expression) {
 // parse ' / ' operations
 function parseDivisionExpressions(expression) {
    const numbersStr = expression.split('/');
-   const numbers = numbersStr.map(str => parseFloat(str));
+   // float was not working properly
+   const numbers = numbersStr.map(str => +str); 
    const initValue = numbers[0];
    const result = numbers.slice(1).reduce((acc, operand) => acc / operand, initValue);
    return result;
