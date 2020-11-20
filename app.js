@@ -203,7 +203,7 @@ function calculate(expression) {
 
 function strip(number) {
    let x = 1000000000;
-   return (Math.round(number * x))/x;
+   return (Math.round(number * x)) / x;
 }
 
 
