@@ -201,13 +201,19 @@ function calculate(expression) {
    }
 }
 
+function strip(number) {
+   let x = 1000000000;
+   return (Math.round(number * x))/x;
+}
+
+
 // parse ' + ' operations
 function parseAdditionExpressions(expression) {
    const numbersStr = expression.split("+");
    const numbers = numbersStr.map(str => parseSubtractionExpressions(str));
    const initValue = 0.0;
    const result = numbers.reduce((acc, operand) => acc + operand, initValue);
-   return result;
+   return strip(result);
 }
 
 // parse ' - ' operations
