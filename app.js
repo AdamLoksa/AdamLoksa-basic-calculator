@@ -46,7 +46,6 @@ function computeCalculation(action, keyContent) {
          operation = '';
          equalStatus = 'false';
       }
-      
       processNumber(keyContent, operation);
    }
    else {
@@ -156,8 +155,7 @@ function displayOperation(operation, result) {
    if (operation.length > 15) {
       outputOperation.style.fontSize = "2rem";
       outputOperation.style['padding-top'] = "2rem";
-   }
-   else {
+   } else {
       outputOperation.style.fontSize = "3rem";
       outputOperation.style['padding-top'] = "1rem";
    }
@@ -179,12 +177,12 @@ function backSpace(operation) {
 function calculateFactorial(operation) {
    if (operation === 0){
       return '1';
-   } 
-   else {
+   } else {
       let result = 1;
       for (let i = 1; i <= operation; i++) {
          result *= i;
       }
+      
       return result;
    }
 }
