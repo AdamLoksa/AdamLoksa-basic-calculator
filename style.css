@@ -103,7 +103,7 @@ button, .output {
                0 0px 16px rgba(0,0,0,0.2);
 }
 
-button[data-action="equal"] {
+button[data-action="="] {
    color: var(--calculator-equal-color);
 }
 
